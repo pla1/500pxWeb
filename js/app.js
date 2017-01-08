@@ -166,6 +166,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         stopSlideshow();
     };
     $scope.startSlideshow = function() {
+        $scope.slideshowInProgress = true;
         var transaction = db.transaction(["photos"], "readonly");
         var store = transaction.objectStore("photos");
         var index = store.index("index");
