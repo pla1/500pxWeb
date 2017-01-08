@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html data-ng-app="pdModule" ng-controller="pdController">
+
+<head>
+    <title>500px</title>
+    <script src="js/angular.js"></script>
+    <script src="js/app.js"></script>
+    <link rel="stylesheet" href="css/app.css" type="text/css" />
+</head>
+
+<body>
+    <div id="notSlideshowDiv" ng-show="!slideshowInProgress">
+        <h1>500px</h1>
+        <label><input type="radio" ng-model="settings.feature" value="editors" ng-change="saveSettings()">Editors</label>&nbsp;&nbsp;
+        <label><input type="radio" ng-model="settings.feature" value="popular" ng-change="saveSettings()">Popular</label>&nbsp;&nbsp;
+        <label><input type="radio" ng-model="settings.feature" value="highest_rated" ng-change="saveSettings()">Higest rated</label>&nbsp;&nbsp;
+        <label><input type="radio" ng-model="settings.feature" value="upcoming" ng-change="saveSettings()">Upcoming</label>&nbsp;&nbsp;
+        <label><input type="radio" ng-model="settings.feature" value="fresh_today" ng-change="saveSettings()">Fresh today</label>&nbsp;&nbsp;
+        <label><input type="radio" ng-model="settings.feature" value="fresh_yesterday" ng-change="saveSettings()">Fresh yesterday</label>&nbsp;&nbsp;
+        <label><input type="radio" ng-model="settings.feature" value="fresh_week" ng-change="saveSettings()">Fresh week</label>&nbsp;&nbsp;
+        <p>&nbsp;</p>
+        <label ng-repeat="category in settings.categories">
+      <input type="checkbox" ng-model="category.checked" ng-change="saveSettings()"/>{{category.name}}&nbsp;&nbsp;
+  </label>&nbsp;<a href ng-click="selectAllCategories()">All</a>&nbsp;&nbsp;<a href ng-click="deselectAllCategories()">None</a>
+
+        <p>&nbsp;</p>
+        <div class="option">Slideshow seconds:
+            <select ng-model="settings.seconds" ng-change="saveSettings()">
+        <option value=0>Off</option>
+        <option value=1>1</option>
+        <option value=2>2</option>
+        <option value=3>3</option>
+        <option value=4>4</option>
+        <option value=5>5</option>
+        <option value=6>6</option>
+        <option value=7>7</option>
+        <option value=8>8</option>
+        <option value=9>9</option>
+        <option value=10>10</option>
+        <option value=15>15</option>
+        <option value=20>20</option>
+        <option value=30>30</option>
+        <option value=60>60</option>
+      </select>
+        </div>
+    </div>
+    <div style="position: fixed;left: 0;bottom: 0;">{{settings.currentCategory}}</div>
+</body>
+
+</html>
