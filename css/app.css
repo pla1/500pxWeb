@@ -1,7 +1,6 @@
 body, h1, h2, h3, p, li, span {
     font-family: Ubuntu;
     color: white;
-    text-shadow: 2px 2px 8px black;
     font-size: 150%;
 }
 
@@ -17,4 +16,9 @@ html {
 
 input[type='checkbox'], input[type='radio'], button, select {
    transform: scale(1.5);
+}
+
+label {
+  padding:1em;
+  display: inline-block;
 }
