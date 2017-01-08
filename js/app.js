@@ -98,20 +98,20 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     }
 
     function movePhoto(data) {
-        console.log("Move photo: " + data.id);
+        console.log("Move photo record: " + data.id);
         var transaction = db.transaction(["photosHistory"], "readwrite");
         var store = transaction.objectStore("photosHistory");
         var request = store.put(data, data.id);
         request.onsuccess = function(e) {
-            console.log("Add successful photo to photosHistory: " + data.id + ". Now will delete from photos.");
+            console.log("Add successful photo record to photosHistory: " + data.id + ". Now will delete record from photos.");
             var transactionDelete = db.transaction(["photos"], "readwrite");
             var storeDelete = transactionDelete.objectStore("photos");
             var deleteRequest = storeDelete.delete(data.id);
             deleteRequest.onsuccess = function(e) {
-                console.log("Deleted photo: " + data.id);
+                console.log("Deleted photo record: " + data.id);
             }
             deleteRequest.onerror = function(e) {
-                console.log("Delete photo error: " + deleteRequest.error);
+                console.log("Delete photo record error: " + deleteRequest.error);
             }
         }
         request.onerror = function(e) {
@@ -207,6 +207,10 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         $http.get(url, httpConfig).success(function(data) {
             $scope.items = data.photos;
             $scope.settings.pageNumber = data.current_page;
+            if ($scope.settings.pageNumber > data.total_pages) {
+              console.log("Total quantity of pages exceeded. Setting page number back to 1.");
+              $scope.settings.pageNumber = 1;
+            }
             $scope.saveSettings();
             angular.forEach($scope.items, function(item) {
                 storePhoto(item);
@@ -259,23 +263,29 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             console.log("Increment category: " + JSON.stringify(category));
             if (firstCategoryChecked == null && category.checked) {
                 firstCategoryChecked = category.name;
+                console.log("First checked category: " + firstCategoryChecked);
             }
             if (nextCategory == null && found && category.checked) {
                 nextCategory = category.name;
+                console.log("Next checked category: " + nextCategory);
             }
             if (category.name == $scope.settings.currentCategory) {
                 found = true;
+                console.log("Current category found: " + category.name);
             }
         });
         if (nextCategory == null) {
             $scope.settings.pageNumber++;
+            console.log("next category was null. Incrementing page number to: " + $scope.settings.pageNumber);
             if (firstCategoryChecked != null) {
                 nextCategory = firstCategoryChecked;
+                console.log("Setting next category to the first category checked: " + firstCategoryChecked);
             } else {
                 nextCategory = "Nature";
+                console.log("Setting next category to default category: " + nextCategory);
             }
         }
-        console.log("Next category: " + nextCategory);
+        console.log("Next category finally is: " + nextCategory);
         $scope.settings.currentCategory = nextCategory;
         $scope.$apply();
         $scope.saveSettings();
