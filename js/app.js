@@ -1,7 +1,7 @@
 var pdApp = angular
     .module('pdModule', [])
     .constant("CONSTANTS", {
-        FIVEHUNDRED_PIX_CONSUMER_KEY: "WRqL9VhwqzZkGpMESmJUpCSivjsNQTKfzGIAfaVG",
+        FIVEHUNDRED_PIX_CONSUMER_KEY: "ch1v90aEp64AtJhuAjgov97uM93HW4Gg34jA8DuC",
         FIVEHUNDRED_PIX_API_URL_BASE: "https://api.500px.com"
     });
 
