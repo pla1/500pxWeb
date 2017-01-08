@@ -18,7 +18,17 @@ input[type='checkbox'], input[type='radio'], button, select {
     transform: scale(1.6);
 }
 
+button {
+    margin-left: 1em;
+}
+
 label {
     padding: 1em;
     display: inline-block;
+}
+
+a:-webkit-any-link {
+    color: blue;
+    text-decoration: none;
+    cursor: auto;
 }
