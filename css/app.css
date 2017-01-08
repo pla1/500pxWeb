@@ -15,7 +15,7 @@ html {
 }
 
 input[type='checkbox'], input[type='radio'], button, select {
-    transform: scale(1.5);
+    transform: scale(1.6);
 }
 
 label {

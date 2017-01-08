@@ -241,15 +241,16 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         console.log("Document loaded.");
     }
     $scope.selectAllCategories = function() {
-      angular.forEach($scope.settings.categories, function(category) {
-        category.checked = true;
-      });
+        angular.forEach($scope.settings.categories, function(category) {
+            category.checked = true;
+        });
     }
     $scope.deselectAllCategories = function() {
-      angular.forEach($scope.settings.categories, function(category) {
-        category.checked = false;
-      });
+        angular.forEach($scope.settings.categories, function(category) {
+            category.checked = false;
+        });
     }
+
     function incrementCategory() {
         var nextCategory = null;
         var firstCategoryChecked = null;
@@ -276,6 +277,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         }
         console.log("Next category: " + nextCategory);
         $scope.settings.currentCategory = nextCategory;
+        $scope.$apply();
         $scope.saveSettings();
     }
 
@@ -287,6 +289,9 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
                 "name": categories[i],
                 "checked": true
             };
+            if (category.name == "Nude") {
+                category.checked = false;
+            }
             $scope.settings.categories.push(category);
         }
         $scope.settings.feature = "highest_rated";
