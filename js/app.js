@@ -57,6 +57,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     bodyElement.style.backgroundRepeat = 'no-repeat';
     bodyElement.style.backgroundPosition = 'center';
     $scope.settings = {};
+    $scope.message = "";
     var slideshowDiv = document.getElementById("slideshowDiv");
     var db;
     var dbOpen = indexedDB.open('500px', 21);
@@ -159,10 +160,16 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         document.body.style.cursor = 'default';
         $scope.$apply();
     }
+    function log(msg) {
+      console.log(msg);
+      $scope.message = msg;
+    }
     bodyElement.addEventListener('touchstart', function(e) {
+        log("touchstart event. Slideshow stopped.");
         stopSlideshow();
     });
     document.onkeydown = function(evt) {
+        log("onkeydown event. Slideshow stopped.");
         stopSlideshow();
     };
     $scope.startSlideshow = function() {
