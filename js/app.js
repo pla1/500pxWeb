@@ -160,20 +160,30 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         document.body.style.cursor = 'default';
         $scope.$apply();
     }
+
     function log(msg) {
-      console.log(msg);
-      $scope.message = msg;
+        console.log(msg);
+        $scope.message = msg;
     }
     bodyElement.addEventListener('touchstart', function(e) {
         log("touchstart event. Slideshow stopped.");
         stopSlideshow();
     });
-    document.onkeydown = function(evt) {
-        log("onkeydown event. Slideshow stopped.");
-        stopSlideshow();
+
+    document.onkeypress = function(e) {
+        e = e || window.event;
+        var charCode = (typeof e.which == "undefined") ? e.keyCode : e.which;
+        var charStr = String.fromCharCode(charCode);
+        if (/\d/.test(charStr)) {
+            log("onkeydown event by a number. Slideshow stopped by keying the number: " + charStr + ".");
+            stopSlideshow();
+            return false;
+        }
     };
     $scope.startSlideshow = function() {
         $scope.slideshowInProgress = true;
+        $scope.message = "";
+        $scope.$apply();
         var transaction = db.transaction(["photos"], "readonly");
         var store = transaction.objectStore("photos");
         var index = store.index("index");
@@ -215,8 +225,8 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             $scope.items = data.photos;
             $scope.settings.pageNumber = data.current_page;
             if ($scope.settings.pageNumber > data.total_pages) {
-              console.log("Total quantity of pages exceeded. Setting page number back to 1.");
-              $scope.settings.pageNumber = 1;
+                console.log("Total quantity of pages exceeded. Setting page number back to 1.");
+                $scope.settings.pageNumber = 1;
             }
             $scope.saveSettings();
             angular.forEach($scope.items, function(item) {
