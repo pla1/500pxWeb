@@ -42,6 +42,18 @@ pdApp.directive("loadingIndicator", function() {
     };
 });
 
+function fade(element) {
+    var op = 1;  // initial opacity
+    var timer = setInterval(function () {
+        if (op <= 0.1){
+            clearInterval(timer);
+            element.style.display = 'none';
+        }
+        element.style.opacity = op;
+        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+        op -= op * 0.1;
+    }, 100);
+}
 
 pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scope, $http, CONSTANTS) {
     var w = window,
@@ -53,6 +65,8 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     console.log('SCREEN SIZE: ' + x + 'x' + y + ' ' + w.innerWidth + ' ' + w.innerHeight);
     console.log(d.getElementsByTagName('body')[0].clientWidth + ' ' + d.getElementsByTagName('body')[0].clientHeight);
     var bodyElement = document.getElementsByTagName("body")[0];
+    var firstRunMessageId = document.getElementById("firstRunMessageId")
+    fade(firstRunMessageId);
     bodyElement.style.backgroundSize = 'contain';
     bodyElement.style.backgroundRepeat = 'no-repeat';
     bodyElement.style.backgroundPosition = 'center';
