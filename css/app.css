@@ -26,6 +26,9 @@ label {
     padding: 1em;
     display: inline-block;
 }
+label:hover {
+  background-color: gray;
+}
 
 a:-webkit-any-link {
     color: blue;
