@@ -34,4 +34,8 @@ a:-webkit-any-link {
     color: blue;
     text-decoration: none;
     cursor: auto;
+    padding: 1em;
+}
+a:hover {
+  background-color: gray;
 }

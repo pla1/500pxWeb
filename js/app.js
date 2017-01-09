@@ -43,16 +43,16 @@ pdApp.directive("loadingIndicator", function() {
 });
 
 function fade(element) {
-    var op = 1;  // initial opacity
-    var timer = setInterval(function () {
-        if (op <= 0.1){
+    var op = 1; // initial opacity
+    var timer = setInterval(function() {
+        if (op <= 0.1) {
             clearInterval(timer);
             element.style.display = 'none';
         }
         element.style.opacity = op;
         element.style.filter = 'alpha(opacity=' + op * 100 + ")";
         op -= op * 0.1;
-    }, 100);
+    }, 120);
 }
 
 pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scope, $http, CONSTANTS) {
@@ -180,7 +180,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         $scope.message = msg;
     }
     bodyElement.addEventListener('touchstart', function(e) {
-        log("touchstart event. Slideshow stopped.");
+        log("Slideshow stopped by touching the screen.");
         stopSlideshow();
     });
 
@@ -189,7 +189,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         var charCode = (typeof e.which == "undefined") ? e.keyCode : e.which;
         var charStr = String.fromCharCode(charCode);
         if (/\d/.test(charStr)) {
-            log("onkeydown event by a number. Slideshow stopped by keying the number: " + charStr + ".");
+            log("Slideshow stopped by keying the number: " + charStr + ".");
             stopSlideshow();
             return false;
         }
