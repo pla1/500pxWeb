@@ -99,7 +99,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         console.log("DB open error. " + e);
     }
 
-    function storePhoto(data) {
+    function storePhotoRecord(data) {
         console.log("Store photo: " + data.id);
         var transaction = db.transaction(["photos"], "readwrite");
         var store = transaction.objectStore("photos");
@@ -249,7 +249,9 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             }
             $scope.saveSettings();
             angular.forEach($scope.items, function(item) {
-                storePhoto(item);
+                var img = new Image();
+                img.src = item.image_url;
+                storePhotoRecord(item);
             });
             document.body.style.cursor = 'none';
             slideshowRoutine();
@@ -333,7 +335,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         $scope.saveSettings();
     }
     $scope.getPageNumber = function() {
-      var pageNumber = 1;
+        var pageNumber = 1;
         angular.forEach($scope.settings.categories, function(category) {
             if ($scope.settings.currentCategory == category.name) {
                 pageNumber = category.pageNumber;
