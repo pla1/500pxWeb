@@ -30,7 +30,7 @@
         </div>
         <div>
             <p>Slideshow seconds:&nbsp;
-                <select ng-model="settings.seconds" ng-change="saveSettings()">
+                <select ng-model="settings.seconds" ng-change="saveSettings()" title="Number of seconds between photos">
         <option value=0>Off</option>
         <option value=1>1</option>
         <option value=2>2</option>
@@ -50,7 +50,7 @@
             </p>
         </div>
         <p>&nbsp;</p>
-        <button ng-click="startSlideshow()">Start</button>
+        <button ng-click="startSlideshow()" title="Start the slideshow">Start</button>
     </div>
     <div style="position: fixed;right: 0;top: 0;opacity: 0.2;">{{message}}</div>
     <div id="firstRunMessageId" style="left: 0;line-height: 200px;margin-top: -100px;position: absolute;text-align: center;top: 50%; width: 100%;font-size:8em;">Key a number to stop this slideshow.</div>

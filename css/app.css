@@ -25,6 +25,7 @@ button {
 label {
     padding: 1em;
     display: inline-block;
+    border-radius: 25px;
 }
 label:hover {
   background-color: gray;

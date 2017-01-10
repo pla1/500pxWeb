@@ -74,7 +74,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     $scope.message = "";
     var slideshowDiv = document.getElementById("slideshowDiv");
     var db;
-    var dbOpen = indexedDB.open('500px', 21);
+    var dbOpen = indexedDB.open('500px', 23);
     var timer = null;
     dbOpen.onupgradeneeded = function(e) {
         console.log("Upgrading...");
@@ -135,7 +135,12 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     }
 
     $scope.slideshowInProgress = true;
-
+    familyFriendlyDefaultCategories = [
+        "Animals",
+        "City and Architecture",
+        "Nature",
+        "Still Life"
+    ];
     categories = [
         "Uncategorized",
         "Abstract",
@@ -228,7 +233,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             params: {
                 feature: $scope.settings.feature,
                 only: $scope.settings.currentCategory,
-                page: $scope.settings.pageNumber,
+                page: $scope.getPageNumber(),
                 consumer_key: CONSTANTS.FIVEHUNDRED_PIX_CONSUMER_KEY,
                 rpp: 5,
                 image_size: $scope.settings.imageSize
@@ -237,10 +242,10 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         console.log("URL:" + url + "HTTP Config: " + JSON.stringify(httpConfig));
         $http.get(url, httpConfig).success(function(data) {
             $scope.items = data.photos;
-            $scope.settings.pageNumber = data.current_page;
+            $scope.setPageNumber(data.current_page);
             if ($scope.settings.pageNumber > data.total_pages) {
                 console.log("Total quantity of pages exceeded. Setting page number back to 1.");
-                $scope.settings.pageNumber = 1;
+                $scope.setPageNumber(1);
             }
             $scope.saveSettings();
             angular.forEach($scope.items, function(item) {
@@ -288,17 +293,21 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
 
     function incrementCategory() {
         var nextCategory = null;
+        var pageNumber = 1;
         var firstCategoryChecked = null;
+        var firstCategoryCheckedPageNumber = 1;
         var found = false;
         angular.forEach($scope.settings.categories, function(category) {
             console.log("Increment category: " + JSON.stringify(category));
             if (firstCategoryChecked == null && category.checked) {
                 firstCategoryChecked = category.name;
+                firstCategoryCheckedPageNumber = category.pageNumber;
                 console.log("First checked category: " + firstCategoryChecked);
             }
             if (nextCategory == null && found && category.checked) {
                 nextCategory = category.name;
-                console.log("Next checked category: " + nextCategory);
+                pageNumber = category.pageNumber;
+                console.log("Next checked category: " + nextCategory + " at page number: " + pageNumber);
             }
             if (category.name == $scope.settings.currentCategory) {
                 found = true;
@@ -306,40 +315,61 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             }
         });
         if (nextCategory == null) {
-            $scope.settings.pageNumber++;
-            console.log("next category was null. Incrementing page number to: " + $scope.settings.pageNumber);
             if (firstCategoryChecked != null) {
                 nextCategory = firstCategoryChecked;
+                pageNumber = firstCategoryCheckedPageNumber;
                 console.log("Setting next category to the first category checked: " + firstCategoryChecked);
             } else {
                 nextCategory = "Nature";
+                pageNumber = 1;
                 console.log("Setting next category to default category: " + nextCategory);
             }
         }
-        console.log("Next category finally is: " + nextCategory);
+        pageNumber++;
+        console.log("Next category finally is: " + nextCategory + " at page number: " + pageNumber);
         $scope.settings.currentCategory = nextCategory;
+        $scope.setPageNumber(pageNumber);
         $scope.$apply();
         $scope.saveSettings();
     }
-
+    $scope.getPageNumber = function() {
+      var pageNumber = 1;
+        angular.forEach($scope.settings.categories, function(category) {
+            if ($scope.settings.currentCategory == category.name) {
+                pageNumber = category.pageNumber;
+            }
+        });
+        return pageNumber;
+    }
+    $scope.setPageNumber = function(pageNumber) {
+        console.log("Set page number to: " + pageNumber + " before: " + $scope.getPageNumber());
+        angular.forEach($scope.settings.categories, function(category) {
+            if ($scope.settings.currentCategory == category.name) {
+                console.log("Current category found.");
+                category.pageNumber = pageNumber;
+            }
+        });
+        console.log("Set page number to: " + pageNumber + " after: " + $scope.getPageNumber());
+    }
     $scope.loadDefaultSettings = function() {
         $scope.settings = {};
         $scope.settings.categories = [];
         for (var i = 0; i < categories.length; i++) {
             var category = {
                 "name": categories[i],
-                "checked": true
+                "pageNumber": 1,
+                "checked": false
             };
-            if (category.name == "Nude") {
-                category.checked = false;
+            if (familyFriendlyDefaultCategories.indexOf(category.name) != -1) {
+                category.checked = true;
             }
             $scope.settings.categories.push(category);
         }
         $scope.settings.feature = "highest_rated";
         $scope.settings.seconds = 3;
-        $scope.settings.pageNumber = 1;
         $scope.settings.currentCategory = "Nature";
         $scope.settings.imageSize = 1080;
+        console.log("Loaded default settings: " + JSON.stringify($scope.settings));
     }
     $scope.loadSettings = function() {
         var transaction = db.transaction(["settings"], "readonly");
