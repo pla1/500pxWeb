@@ -4,6 +4,7 @@
 <head>
     <title>500px</title>
     <script src="js/angular.js"></script>
+    <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
     <link rel="stylesheet" href="css/app.css" type="text/css" />
     <link rel="icon" href="favicon.png" type="image/png">
@@ -11,26 +12,34 @@
 
 <body>
     <div id="notSlideshowDiv" ng-show="!slideshowInProgress">
-        <h1><a href="https://500px.com" style="padding:0">500px</a></h1>
-        <div>
-            <p>Features:</p>
-            <label><input type="radio" ng-model="settings.feature" value="editors" ng-change="saveSettings()"/>Editors</label>&nbsp;&nbsp;
-            <label><input type="radio" ng-model="settings.feature" value="popular" ng-change="saveSettings()"/>Popular</label>&nbsp;&nbsp;
-            <label><input type="radio" ng-model="settings.feature" value="highest_rated" ng-change="saveSettings()"/>Higest rated</label>&nbsp;&nbsp;
-            <label><input type="radio" ng-model="settings.feature" value="upcoming" ng-change="saveSettings()"/>Upcoming</label>&nbsp;&nbsp;
-            <label><input type="radio" ng-model="settings.feature" value="fresh_today" ng-change="saveSettings()"/>Fresh today</label>&nbsp;&nbsp;
-            <label><input type="radio" ng-model="settings.feature" value="fresh_yesterday" ng-change="saveSettings()"/>Fresh yesterday</label>&nbsp;&nbsp;
-            <label><input type="radio" ng-model="settings.feature" value="fresh_week" ng-change="saveSettings()"/>Fresh week</label>&nbsp;&nbsp;
+        <h1><a href="https://500px.com" title="500px website">500px</a></h1>
+        <p>View mode:</p>
+        <label title="View photos based on features and categories"><input type="radio" ng-model="settings.usersOrFeatures" value="features" ng-change="saveSettings()"/>Features and Categories</label>&nbsp;&nbsp;
+        <label title="View photos based on user names you provide"><input type="radio" ng-model="settings.usersOrFeatures" value="users" ng-change="saveSettings()"/>Users</label>&nbsp;&nbsp;
+        <div ng-show="settings.usersOrFeatures == 'users'">
+            <input type="text" ng-model="settings.usernames" placeholder="joe, bob, billy, suzie, rachel..." maxlength="2048" size="100" title="Comma or space separated 500px usernames"><br>
+            <button ng-click="saveUsers()">Save users</button>
         </div>
-        <div>
-            <p>Categories:</p>
-            <label ng-repeat="category in settings.categories"><input type="checkbox" ng-model="category.checked" ng-change="saveSettings()"/>{{category.name}}</label>
-            <a href ng-click="selectAllCategories()" title="Select all features">All</a>
-            <a href ng-click="deselectAllCategories()" title="De-select all features">None</a>
-        </div>
-        <div>
-            <p>Slideshow seconds:&nbsp;
-                <select ng-model="settings.seconds" ng-change="saveSettings()" title="Number of seconds between photos">
+        <div ng-show="settings.usersOrFeatures == 'features'">
+            <div>
+                <p>Features:</p>
+                <label><input type="radio" ng-model="settings.feature" value="editors" ng-change="saveSettings()"/>Editors</label>&nbsp;&nbsp;
+                <label><input type="radio" ng-model="settings.feature" value="popular" ng-change="saveSettings()"/>Popular</label>&nbsp;&nbsp;
+                <label><input type="radio" ng-model="settings.feature" value="highest_rated" ng-change="saveSettings()"/>Higest rated</label>&nbsp;&nbsp;
+                <label><input type="radio" ng-model="settings.feature" value="upcoming" ng-change="saveSettings()"/>Upcoming</label>&nbsp;&nbsp;
+                <label><input type="radio" ng-model="settings.feature" value="fresh_today" ng-change="saveSettings()"/>Fresh today</label>&nbsp;&nbsp;
+                <label><input type="radio" ng-model="settings.feature" value="fresh_yesterday" ng-change="saveSettings()"/>Fresh yesterday</label>&nbsp;&nbsp;
+                <label><input type="radio" ng-model="settings.feature" value="fresh_week" ng-change="saveSettings()"/>Fresh week</label>&nbsp;&nbsp;
+            </div>
+            <div>
+                <p>Categories:</p>
+                <label ng-repeat="category in settings.categories"><input type="checkbox" ng-model="category.checked" ng-change="saveSettings()"/>{{category.name}}</label>
+                <a href ng-click="selectAllCategories()" title="Select all features">All</a>
+                <a href ng-click="deselectAllCategories()" title="De-select all features">None</a>
+            </div>
+            <div>
+                <p>Slideshow seconds:&nbsp;
+                    <select ng-model="settings.seconds" ng-change="saveSettings()" title="Number of seconds between photos">
         <option value=0>Off</option>
         <option value=1>1</option>
         <option value=2>2</option>
@@ -47,7 +56,8 @@
         <option value=30>30</option>
         <option value=60>60</option>
       </select>
-            </p>
+                </p>
+            </div>
         </div>
         <p>&nbsp;</p>
         <button ng-click="startSlideshow()" title="Start the slideshow">Start</button>

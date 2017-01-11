@@ -18,6 +18,12 @@ input[type='checkbox'], input[type='radio'], button, select {
     transform: scale(1.6);
 }
 
+input[type='text'] {
+    margin-top:1em;
+    margin-left: 19em;
+    transform: scale(1.6);
+}
+
 button {
     margin-left: 1em;
 }
@@ -27,8 +33,9 @@ label {
     display: inline-block;
     border-radius: 25px;
 }
+
 label:hover {
-  background-color: gray;
+    background-color: gray;
 }
 
 a:-webkit-any-link {
@@ -38,6 +45,7 @@ a:-webkit-any-link {
     padding: 1em;
     border-radius: 25px;
 }
+
 a:hover {
-  background-color: gray;
+    background-color: gray;
 }

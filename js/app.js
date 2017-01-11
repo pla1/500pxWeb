@@ -74,7 +74,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     $scope.message = "";
     var slideshowDiv = document.getElementById("slideshowDiv");
     var db;
-    var dbOpen = indexedDB.open('500px', 23);
+    var dbOpen = indexedDB.open('500px', 24);
     var timer = null;
     dbOpen.onupgradeneeded = function(e) {
         console.log("Upgrading...");
@@ -225,27 +225,48 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
 
 
     function queryServer() {
-        incrementCategory();
-        console.log('queryServer settings: ' + JSON.stringify($scope.settings));
         var url = CONSTANTS.FIVEHUNDRED_PIX_API_URL_BASE + "/v1/photos";
-        var httpConfig = {
-            method: "GET",
-            params: {
-                feature: $scope.settings.feature,
-                only: $scope.settings.currentCategory,
-                page: $scope.getPageNumber(),
-                consumer_key: CONSTANTS.FIVEHUNDRED_PIX_CONSUMER_KEY,
-                rpp: 5,
-                image_size: $scope.settings.imageSize
+        var httpConfig;
+        if ($scope.settings.usersOrFeatures == "features") {
+            incrementCategory();
+            console.log('queryServer by category. Settings: ' + JSON.stringify($scope.settings));
+            httpConfig = {
+                method: "GET",
+                params: {
+                    feature: $scope.settings.feature,
+                    only: $scope.settings.currentCategory,
+                    page: $scope.getPageNumber(),
+                    consumer_key: CONSTANTS.FIVEHUNDRED_PIX_CONSUMER_KEY,
+                    rpp: 5,
+                    image_size: $scope.settings.imageSize
+                }
+            }
+        } else {
+            incrementUser();
+            console.log('queryServer by user. Settings: ' + JSON.stringify($scope.settings));
+            httpConfig = {
+                method: "GET",
+                params: {
+                    feature: "user",
+                    username: $scope.settings.currentUsername,
+                    page: $scope.getPageNumberForUsername(),
+                    consumer_key: CONSTANTS.FIVEHUNDRED_PIX_CONSUMER_KEY,
+                    rpp: 5,
+                    image_size: $scope.settings.imageSize
+                }
             }
         }
         console.log("URL:" + url + "HTTP Config: " + JSON.stringify(httpConfig));
         $http.get(url, httpConfig).success(function(data) {
             $scope.items = data.photos;
             $scope.setPageNumber(data.current_page);
-            if ($scope.settings.pageNumber > data.total_pages) {
+            if ($scope.settings.pageNumber > data.total_pages || data.photos.length == 0) {
                 console.log("Total quantity of pages exceeded. Setting page number back to 1.");
-                $scope.setPageNumber(1);
+                if ($scope.settings.usersOrFeatures == 'features') {
+                    $scope.setPageNumber(0);
+                } else {
+                    $scope.setPageNumberForUser(0);
+                }
             }
             $scope.saveSettings();
             angular.forEach($scope.items, function(item) {
@@ -292,6 +313,76 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             category.checked = false;
         });
     }
+    $scope.saveUsers = function() {
+        var regExNotLetterOrNumber = /[^a-zA-Z0-9]/;
+        var arrayOfUsernames = $scope.settings.usernames.split(regExNotLetterOrNumber);
+        var arrayOfUsers = [];
+        for (var i = 0; i < arrayOfUsernames.length; i++) {
+            var username = arrayOfUsernames[i];
+            if (isNotBlank(username)) {
+                console.log("User name " + i + ": " + username);
+                var found = false;
+                angular.forEach($scope.settings.users, function(user) {
+                    if (user.name == username) {
+                        arrayOfUsers.push(user);
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    var user = {
+                        "name": username,
+                        "pageNumber": 1
+                    }
+                    arrayOfUsers.push(user);
+                }
+            }
+        }
+        $scope.settings.users = arrayOfUsers;
+        $scope.saveSettings();
+    }
+
+    function incrementUser() {
+        var nextUser = null;
+        var pageNumber = 1;
+        var firstUser = null;
+        var firstUserPageNumber = 1;
+        var found = false;
+
+        angular.forEach($scope.settings.users, function(user) {
+            console.log("Increment category: " + JSON.stringify(user));
+            if (firstUser == null) {
+                firstUser = user.name;
+                firstUserPageNumber = user.pageNumber;
+                console.log("First user: " + firstUser);
+            }
+            if (nextUser == null && found) {
+                nextUser = user.name;
+                pageNumber = user.pageNumber;
+                console.log("Next user: " + nextUser + " at page number: " + pageNumber);
+            }
+            if (user.name == $scope.settings.currentUsername) {
+                found = true;
+                console.log("Current user found: " + user.name);
+            }
+        });
+        if (nextUser == null) {
+            if (firstUser != null) {
+                nextUser = firstUser;
+                pageNumber = firstUserPageNumber;
+                console.log("Setting next user to the first user: " + firstUser);
+            } else {
+                nextUser = "imagesbylaurie";
+                pageNumber = 1;
+                console.log("Setting next user to default user: " + nextUser);
+            }
+        }
+        pageNumber++;
+        console.log("Next user finally is: " + nextUser + " at page number: " + pageNumber);
+        $scope.settings.currentUsername = nextUser;
+        $scope.setPageNumberForUser(pageNumber);
+        $scope.$apply();
+        $scope.saveSettings();
+    }
 
     function incrementCategory() {
         var nextCategory = null;
@@ -334,6 +425,16 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         $scope.$apply();
         $scope.saveSettings();
     }
+    $scope.getPageNumberForUsername = function() {
+        var pageNumber = 1;
+        angular.forEach($scope.settings.users, function(user) {
+            if ($scope.settings.currentUsername == user.name) {
+                pageNumber = user.pageNumber;
+            }
+        });
+        console.log("Returning page number: " + pageNumber + " for user: " + $scope.settings.currentUsername);
+        return pageNumber;
+    }
     $scope.getPageNumber = function() {
         var pageNumber = 1;
         angular.forEach($scope.settings.categories, function(category) {
@@ -349,6 +450,16 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             if ($scope.settings.currentCategory == category.name) {
                 console.log("Current category found.");
                 category.pageNumber = pageNumber;
+            }
+        });
+        console.log("Set page number to: " + pageNumber + " after: " + $scope.getPageNumber());
+    }
+    $scope.setPageNumberForUser = function(pageNumber) {
+        console.log("Set page number to: " + pageNumber + " before: " + $scope.getPageNumber());
+        angular.forEach($scope.settings.users, function(user) {
+            if ($scope.settings.currentUsername == user.name) {
+                console.log("Current user found.");
+                user.pageNumber = pageNumber;
             }
         });
         console.log("Set page number to: " + pageNumber + " after: " + $scope.getPageNumber());
@@ -371,6 +482,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         $scope.settings.seconds = 3;
         $scope.settings.currentCategory = "Nature";
         $scope.settings.imageSize = 1080;
+        $scope.settings.usersOrFeatures = "features";
         console.log("Loaded default settings: " + JSON.stringify($scope.settings));
     }
     $scope.loadSettings = function() {
