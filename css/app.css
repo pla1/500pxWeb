@@ -18,11 +18,6 @@ input[type='checkbox'], input[type='radio'], button, select {
     transform: scale(1.6);
 }
 
-input[type='text'] {
-    margin-top:1em;
-    margin-left: 19em;
-    transform: scale(1.6);
-}
 
 button {
     margin-left: 1em;

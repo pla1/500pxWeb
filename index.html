@@ -14,10 +14,10 @@
     <div id="notSlideshowDiv" ng-show="!slideshowInProgress">
         <h1><a href="https://500px.com" title="500px website">500px</a></h1>
         <p>View mode:</p>
-        <label title="View photos based on features and categories"><input type="radio" ng-model="settings.usersOrFeatures" value="features" ng-change="saveSettings()"/>Features and Categories</label>&nbsp;&nbsp;
-        <label title="View photos based on user names you provide"><input type="radio" ng-model="settings.usersOrFeatures" value="users" ng-change="saveSettings()"/>Users</label>&nbsp;&nbsp;
+        <label title="View photos based on features and categories"><input type="radio" ng-model="settings.usersOrFeatures" value="features" ng-change="changeMode()"/>Features and Categories</label>&nbsp;&nbsp;
+        <label title="View photos based on user names you provide"><input type="radio" ng-model="settings.usersOrFeatures" value="users" ng-change="changeMode()"/>Users</label>&nbsp;&nbsp;
         <div ng-show="settings.usersOrFeatures == 'users'">
-            <input type="text" ng-model="settings.usernames" placeholder="joe, bob, billy, suzie, rachel..." maxlength="2048" size="100" title="Comma or space separated 500px usernames"><br>
+            <input type="text" ng-model="settings.usernames" placeholder="joe, bob, billy, suzie, rachel..." style="width:100%" title="Comma or space separated 500px usernames"><br>
             <button ng-click="saveUsers()">Save users</button>
         </div>
         <div ng-show="settings.usersOrFeatures == 'features'">

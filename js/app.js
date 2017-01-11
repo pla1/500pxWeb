@@ -111,6 +111,23 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             console.log("Add failed " + request.error);
         }
     }
+    $scope.changeMode = function() {
+        console.log("Mode changed to " + $scope.settings.usersOrFeatures + ". Clearing photos table and saving settings.");
+        clearPhotos();
+        $scope.saveSettings();
+    }
+
+    function clearPhotos() {
+        var transactionDelete = db.transaction(["photos"], "readwrite");
+        var storeDelete = transactionDelete.objectStore("photos");
+        var clearRequest = storeDelete.clear();
+        clearRequest.onsuccess = function(e) {
+            console.log("Clear photo table");
+        }
+        clearRequest.onerror = function(e) {
+            console.log("Clear photo table error: " + clearRequest.error);
+        }
+    }
 
     function movePhoto(data) {
         console.log("Move photo record: " + data.id);
