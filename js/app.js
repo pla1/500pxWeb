@@ -220,9 +220,9 @@ pdApp.controller('pdController', ['$scope', '$timeout', '$interval', '$http', 'C
             $scope.$apply();
             if (userDisplayedInterval != null) {
               console.log("Cancel interval");
-              $scope.userDisplayed = null;
               $interval.cancel(userDisplayedInterval);
             }
+            $scope.userDisplayed = null;
             var transaction = db.transaction(["photos"], "readonly");
             var store = transaction.objectStore("photos");
             var index = store.index("index");
