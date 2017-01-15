@@ -42,19 +42,6 @@ pdApp.directive("loadingIndicator", function() {
     };
 });
 
-function fade(element) {
-    var op = 1; // initial opacity
-    var timer = setInterval(function() {
-        if (op <= 0.1) {
-            clearInterval(timer);
-            element.style.display = 'none';
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op -= op * 0.1;
-    }, 120);
-}
-
 pdApp.controller('pdController', ['$scope', '$timeout', '$interval', '$http', 'CONSTANTS',
     function($scope, $timeout, $interval, $http, CONSTANTS) {
         var w = window,
@@ -68,12 +55,12 @@ pdApp.controller('pdController', ['$scope', '$timeout', '$interval', '$http', 'C
         var bodyElement = document.getElementsByTagName("body")[0];
         var firstRunMessageId = document.getElementById("firstRunMessageId")
         var regExNotLetterOrNumber = /[^a-zA-Z0-9]/;
-        fade(firstRunMessageId);
         bodyElement.style.backgroundSize = 'contain';
         bodyElement.style.backgroundRepeat = 'no-repeat';
         bodyElement.style.backgroundPosition = 'center';
         $scope.settings = {};
         $scope.message = "";
+        $scope.startupMessage = true;
         var slideshowDiv = document.getElementById("slideshowDiv");
         var db;
         var dbOpen = indexedDB.open('500px', 27);
@@ -97,6 +84,7 @@ pdApp.controller('pdController', ['$scope', '$timeout', '$interval', '$http', 'C
             console.log("DB opened. ");
             db = e.target.result;
             $scope.loadSettings();
+            $scope.startupMessage = false;
         }
         dbOpen.onerror = function(e) {
             console.log("DB open error. " + e);
@@ -232,6 +220,7 @@ pdApp.controller('pdController', ['$scope', '$timeout', '$interval', '$http', 'C
             $scope.$apply();
             if (userDisplayedInterval != null) {
               console.log("Cancel interval");
+              $scope.userDisplayed = null;
               $interval.cancel(userDisplayedInterval);
             }
             var transaction = db.transaction(["photos"], "readonly");
@@ -286,6 +275,7 @@ pdApp.controller('pdController', ['$scope', '$timeout', '$interval', '$http', 'C
             var userDisplayedIntervalMillis = 1000;
             if (userDisplayedInterval != null) {
               console.log("Cancel interval");
+              $scope.userDisplayed = null;
               $interval.cancel(userDisplayedInterval);
             }
             function userDisplayedFunction() {
