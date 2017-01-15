@@ -14,26 +14,26 @@
     <div id="notSlideshowDiv" ng-show="!slideshowInProgress">
         <h1><a href="https://500px.com" title="500px website">500px</a></h1>
         <p>View mode:</p>
-        <label title="View photos based on features and categories"><input type="radio" ng-model="settings.usersOrFeatures" value="features" ng-change="changeMode()"/>Features and Categories</label>&nbsp;&nbsp;
-        <label title="View photos based on user names you provide"><input type="radio" ng-model="settings.usersOrFeatures" value="users" ng-change="changeMode()"/>Users</label>&nbsp;&nbsp;
+        <label ng-class="{'selected':settings.usersOrFeatures == 'features'}" title="View photos based on features and categories"><input type="radio" ng-model="settings.usersOrFeatures" value="features" ng-change="changeMode()"/>Features and Categories</label>&nbsp;&nbsp;
+        <label ng-class="{'selected':settings.usersOrFeatures == 'users'}" title="View photos based on user names you provide"><input type="radio" ng-model="settings.usersOrFeatures" value="users" ng-change="changeMode()"/>Users</label>&nbsp;&nbsp;
         <div ng-show="settings.usersOrFeatures == 'users'">
-            <input type="text" ng-model="settings.usernames" placeholder="joe, bob, billy, suzie, rachel..." style="width:100%" title="Comma or space separated 500px usernames"><br>
+            <input type="text" ng-model="settings.usernames" placeholder="joe, bob, suzie, billy, rachel..." style="width:100%" title="Comma or space separated 500px usernames"><br>
             <button ng-click="saveUsers()">Save users</button>
         </div>
         <div ng-show="settings.usersOrFeatures == 'features'">
             <div>
                 <p>Features:</p>
-                <label><input type="radio" ng-model="settings.feature" value="editors" ng-change="saveSettings()"/>Editors</label>&nbsp;&nbsp;
-                <label><input type="radio" ng-model="settings.feature" value="popular" ng-change="saveSettings()"/>Popular</label>&nbsp;&nbsp;
-                <label><input type="radio" ng-model="settings.feature" value="highest_rated" ng-change="saveSettings()"/>Higest rated</label>&nbsp;&nbsp;
-                <label><input type="radio" ng-model="settings.feature" value="upcoming" ng-change="saveSettings()"/>Upcoming</label>&nbsp;&nbsp;
-                <label><input type="radio" ng-model="settings.feature" value="fresh_today" ng-change="saveSettings()"/>Fresh today</label>&nbsp;&nbsp;
-                <label><input type="radio" ng-model="settings.feature" value="fresh_yesterday" ng-change="saveSettings()"/>Fresh yesterday</label>&nbsp;&nbsp;
-                <label><input type="radio" ng-model="settings.feature" value="fresh_week" ng-change="saveSettings()"/>Fresh week</label>&nbsp;&nbsp;
+                <label ng-class="{'selected':settings.feature == 'editors'}"><input type="radio" ng-model="settings.feature" value="editors" ng-change="saveSettings()"/>Editors</label>&nbsp;&nbsp;
+                <label ng-class="{'selected':settings.feature == 'popular'}"><input type="radio" ng-model="settings.feature" value="popular" ng-change="saveSettings()"/>Popular</label>&nbsp;&nbsp;
+                <label ng-class="{'selected':settings.feature == 'highest_rated'}"><input type="radio" ng-model="settings.feature" value="highest_rated" ng-change="saveSettings()"/>Highest rated</label>&nbsp;&nbsp;
+                <label ng-class="{'selected':settings.feature == 'upcoming'}"><input type="radio" ng-model="settings.feature" value="upcoming" ng-change="saveSettings()"/>Upcoming</label>&nbsp;&nbsp;
+                <label ng-class="{'selected':settings.feature == 'fresh_today'}"><input type="radio" ng-model="settings.feature" value="fresh_today" ng-change="saveSettings()"/>Fresh today</label>&nbsp;&nbsp;
+                <label ng-class="{'selected':settings.feature == 'fresh_yesterday'}"><input type="radio" ng-model="settings.feature" value="fresh_yesterday" ng-change="saveSettings()"/>Fresh yesterday</label>&nbsp;&nbsp;
+                <label ng-class="{'selected':settings.feature == 'fresh_week'}"><input type="radio" ng-model="settings.feature" value="fresh_week" ng-change="saveSettings()"/>Fresh week</label>&nbsp;&nbsp;
             </div>
             <div>
                 <p>Categories:</p>
-                <label ng-repeat="category in settings.categories"><input type="checkbox" ng-model="category.checked" ng-change="saveSettings()"/>{{category.name}}</label>
+                <label ng-repeat="category in settings.categories" ng-class="{'selected':category.checked}"><input type="checkbox" ng-model="category.checked" ng-change="saveSettings()"/>{{category.name}}</label>
                 <a href ng-click="selectAllCategories()" title="Select all features">All</a>
                 <a href ng-click="deselectAllCategories()" title="De-select all features">None</a>
             </div>

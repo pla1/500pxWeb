@@ -18,9 +18,19 @@ input[type='checkbox'], input[type='radio'], button, select {
     transform: scale(1.6);
 }
 
+input[type='checkbox'], input[type='radio'] {
+  display:none;
+}
 
 button {
     margin-left: 1em;
+}
+
+.selected {
+  background-color:silver;
+}
+.selected:hover {
+  background-color:silver;
 }
 
 label {
@@ -30,7 +40,8 @@ label {
 }
 
 label:hover {
-    background-color: gray;
+    background-color: white;
+    color:black;
 }
 
 a:-webkit-any-link {
