@@ -17,8 +17,11 @@
         <label ng-class="{'selected':settings.usersOrFeatures == 'features'}" title="View photos based on features and categories"><input type="radio" ng-model="settings.usersOrFeatures" value="features" ng-change="changeMode()"/>Features and Categories</label>&nbsp;&nbsp;
         <label ng-class="{'selected':settings.usersOrFeatures == 'users'}" title="View photos based on user names you provide"><input type="radio" ng-model="settings.usersOrFeatures" value="users" ng-change="changeMode()"/>Users</label>&nbsp;&nbsp;
         <div ng-show="settings.usersOrFeatures == 'users'">
-            <input type="text" ng-model="settings.usernames" placeholder="joe, bob, suzie, billy, rachel..." style="width:100%" title="Comma or space separated 500px usernames"><br>
-            <button ng-click="saveUsers()">Save users</button>
+            <ul><li ng-repeat="error in errors" class="warning">{{error}}</li></ul>
+            <textarea ng-model="settings.usernames" placeholder="joe, bob, suzie, billy, rachel..." title="Comma or space separated 500px usernames" cols="132" rows="5"></textarea><br>
+            <div style="float:left;text-align:center;" ng-repeat="user in users"><img ng-src="{{user.userpic_url}}"><br>{{user.fullname}}</div>
+            <p style="clear:both">&nbsp;</p>
+            <button ng-click="queryServerUsers()">Save users</button>
         </div>
         <div ng-show="settings.usersOrFeatures == 'features'">
             <div>
@@ -37,11 +40,12 @@
                 <a href ng-click="selectAllCategories()" title="Select all features">All</a>
                 <a href ng-click="deselectAllCategories()" title="De-select all features">None</a>
             </div>
-            <div>
-                <p>Slideshow seconds:&nbsp;
-                  <label ng-class="{'selected':settings.seconds == s}" ng-repeat="s in seconds"><input type="radio" ng-model="settings.seconds" ng-change="saveSettings()" ng-value="s"/>{{s}}</label>
-                </p>
-            </div>
+
+        </div>
+        <div>
+            <p>Slideshow seconds:&nbsp;
+              <label ng-class="{'selected':settings.seconds == s}" ng-repeat="s in seconds"><input type="radio" ng-model="settings.seconds" ng-change="saveSettings()" ng-value="s"/>{{s}}</label>
+            </p>
         </div>
         <button ng-click="startSlideshow()" title="Start the slideshow">Start</button>
     </div>

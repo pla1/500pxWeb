@@ -66,6 +66,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     console.log(d.getElementsByTagName('body')[0].clientWidth + ' ' + d.getElementsByTagName('body')[0].clientHeight);
     var bodyElement = document.getElementsByTagName("body")[0];
     var firstRunMessageId = document.getElementById("firstRunMessageId")
+    var regExNotLetterOrNumber = /[^a-zA-Z0-9]/;
     fade(firstRunMessageId);
     bodyElement.style.backgroundSize = 'contain';
     bodyElement.style.backgroundRepeat = 'no-repeat';
@@ -74,7 +75,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     $scope.message = "";
     var slideshowDiv = document.getElementById("slideshowDiv");
     var db;
-    var dbOpen = indexedDB.open('500px', 26);
+    var dbOpen = indexedDB.open('500px', 27);
     var timer = null;
     dbOpen.onupgradeneeded = function(e) {
         console.log("Upgrading...");
@@ -220,8 +221,8 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         if (/\d/.test(charStr)) {
             log("Slideshow stopped by keying the number: " + charStr + ".");
             stopSlideshow();
-            return false;
         }
+        return true;
     };
     $scope.startSlideshow = function() {
         $scope.slideshowInProgress = true;
@@ -234,7 +235,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         request.onsuccess = function(e) {
             console.log("Row count: " + request.result);
             if (request.result == 0) {
-                queryServer();
+                queryServerPhotos();
             } else {
                 document.body.style.cursor = 'none';
                 slideshowRoutine();
@@ -247,13 +248,42 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     }
 
 
+    $scope.queryServerUsers = function() {
+        console.log("queryServerUsers() " + $scope.settings.usernames);
+        $scope.users = [];
+        $scope.errors = [];
+        var url = CONSTANTS.FIVEHUNDRED_PIX_API_URL_BASE + "/v1/users/show";
+        var arrayOfUsernames = $scope.settings.usernames.split(regExNotLetterOrNumber);
+        console.log(arrayOfUsernames.length + " usernames");
+        for (var i = 0; i < arrayOfUsernames.length; i++) {
+            console.log("Query user name: " + arrayOfUsernames[i]);
+            httpConfig = {
+                method: "GET",
+                params: {
+                    username: arrayOfUsernames[i],
+                    consumer_key: CONSTANTS.FIVEHUNDRED_PIX_CONSUMER_KEY
+                }
+            }
+            console.log("URL:" + url + "HTTP Config: " + JSON.stringify(httpConfig));
+            $http.get(url, httpConfig).then(function(response) {
+                console.log(response);
+                $scope.users.push(response.data.user);
+                if ($scope.users.length == $scope.users.length) {
+                    $scope.saveUsers();
+                }
+            }, function(response) {
+                console.log(response);
+                $scope.errors.push(response.data.error + " - Username: " + httpConfig.params.username);
+            });
+        }
+    }
 
-    function queryServer() {
+    function queryServerPhotos() {
         var url = CONSTANTS.FIVEHUNDRED_PIX_API_URL_BASE + "/v1/photos";
         var httpConfig;
         if ($scope.settings.usersOrFeatures == "features") {
             incrementCategory();
-            console.log('queryServer by category. Settings: ' + JSON.stringify($scope.settings));
+            console.log('queryServerPhotos by category. Settings: ' + JSON.stringify($scope.settings));
             httpConfig = {
                 method: "GET",
                 params: {
@@ -267,7 +297,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             }
         } else {
             incrementUser();
-            console.log('queryServer by user. Settings: ' + JSON.stringify($scope.settings));
+            console.log('queryServerPhotos by user. Settings: ' + JSON.stringify($scope.settings));
             httpConfig = {
                 method: "GET",
                 params: {
@@ -318,7 +348,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             } else {
                 console.log("Cursor not found.");
                 window.clearInterval(timer);
-                queryServer();
+                queryServerPhotos();
             }
         };
 
@@ -338,7 +368,6 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
         });
     }
     $scope.saveUsers = function() {
-        var regExNotLetterOrNumber = /[^a-zA-Z0-9]/;
         var arrayOfUsernames = $scope.settings.usernames.split(regExNotLetterOrNumber);
         var arrayOfUsers = [];
         for (var i = 0; i < arrayOfUsernames.length; i++) {
@@ -362,18 +391,20 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
             }
         }
         $scope.settings.users = arrayOfUsers;
+        $scope.settings.currentUsername = null;
+        clearPhotos();
         $scope.saveSettings();
     }
 
     function incrementUser() {
+        console.log("Increment user. Users: " + JSON.stringify($scope.settings.users));
         var nextUser = null;
         var pageNumber = 1;
         var firstUser = null;
         var firstUserPageNumber = 1;
         var found = false;
-
         angular.forEach($scope.settings.users, function(user) {
-            console.log("Increment category: " + JSON.stringify(user));
+            console.log("Increment user: " + JSON.stringify(user));
             if (firstUser == null) {
                 firstUser = user.name;
                 firstUserPageNumber = user.pageNumber;

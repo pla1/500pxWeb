@@ -13,6 +13,11 @@ html {
     background-color: black;
     height: 100%;
 }
+textarea {
+  margin-top:1em;
+  margin-bottom:1em;
+  font-size: 150%;
+}
 
 input[type='checkbox'], input[type='radio'], button, select {
     transform: scale(1.6);
@@ -23,7 +28,7 @@ input[type='checkbox'], input[type='radio'] {
 }
 
 button {
-    margin-left: 1em;
+    margin: 2em;
 }
 
 .selected {
@@ -54,4 +59,8 @@ a:-webkit-any-link {
 
 a:hover {
     background-color: gray;
+}
+.warning {
+  background-color:yellow;
+  color:red;
 }
