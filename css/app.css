@@ -13,10 +13,11 @@ html {
     background-color: black;
     height: 100%;
 }
+
 textarea {
-  margin-top:1em;
-  margin-bottom:1em;
-  font-size: 150%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-size: 150%;
 }
 
 input[type='checkbox'], input[type='radio'], button, select {
@@ -24,7 +25,7 @@ input[type='checkbox'], input[type='radio'], button, select {
 }
 
 input[type='checkbox'], input[type='radio'] {
-  display:none;
+    display: none;
 }
 
 button {
@@ -32,10 +33,11 @@ button {
 }
 
 .selected {
-  background-color:silver;
+    background-color: silver;
 }
+
 .selected:hover {
-  background-color:silver;
+    background-color: silver;
 }
 
 label {
@@ -46,7 +48,7 @@ label {
 
 label:hover {
     background-color: white;
-    color:black;
+    color: black;
 }
 
 a:-webkit-any-link {
@@ -60,7 +62,23 @@ a:-webkit-any-link {
 a:hover {
     background-color: gray;
 }
+
 .warning {
-  background-color:yellow;
-  color:red;
+    background-color: yellow;
+    color: red;
+}
+
+.user {
+    float: right;
+    text-align: center;
+}
+
+
+.fade.ng-enter {
+    transition: 5s linear all;
+    opacity: 0;
+}
+
+.fade.ng-enter.ng-enter-active {
+    opacity: 1;
 }

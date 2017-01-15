@@ -4,6 +4,7 @@
 <head>
     <title>500px</title>
     <script src="js/angular.js"></script>
+    <script src="js/angular-animate.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
     <link rel="stylesheet" href="css/app.css" type="text/css" />
@@ -17,10 +18,13 @@
         <label ng-class="{'selected':settings.usersOrFeatures == 'features'}" title="View photos based on features and categories"><input type="radio" ng-model="settings.usersOrFeatures" value="features" ng-change="changeMode()"/>Features and Categories</label>&nbsp;&nbsp;
         <label ng-class="{'selected':settings.usersOrFeatures == 'users'}" title="View photos based on user names you provide"><input type="radio" ng-model="settings.usersOrFeatures" value="users" ng-change="changeMode()"/>Users</label>&nbsp;&nbsp;
         <div ng-show="settings.usersOrFeatures == 'users'">
-            <ul><li ng-repeat="error in errors" class="warning">{{error}}</li></ul>
-            <textarea ng-model="settings.usernames" placeholder="joe, bob, suzie, billy, rachel..." title="Comma or space separated 500px usernames" cols="132" rows="5"></textarea><br>
-            <div style="float:left;text-align:center;" ng-repeat="user in users"><img ng-src="{{user.userpic_url}}"><br>{{user.fullname}}</div>
-            <p style="clear:both">&nbsp;</p>
+            <ul>
+                <li ng-repeat="error in errors" class="warning">{{error}}</li>
+            </ul>
+            <div>
+                <textarea ng-model="settings.usernames" placeholder="joe, bob, suzie, billy, rachel..." title="Comma or space separated 500px usernames" cols="50" rows="3"></textarea>&nbsp;&nbsp;
+                <div style="position:absolute;top:10px;right:10px;text-align:center" class="fade"><img ng-src="{{userDisplayed.userpic_url}}"><br>{{userDisplayed.fullname}}</div>
+            </div>
             <button ng-click="queryServerUsers()">Save users</button>
         </div>
         <div ng-show="settings.usersOrFeatures == 'features'">
@@ -42,14 +46,12 @@
             </div>
 
         </div>
-        <div>
-            <p>Slideshow seconds:&nbsp;
-              <label ng-class="{'selected':settings.seconds == s}" ng-repeat="s in seconds"><input type="radio" ng-model="settings.seconds" ng-change="saveSettings()" ng-value="s"/>{{s}}</label>
-            </p>
-        </div>
+        <p>Slideshow seconds:&nbsp;
+            <label ng-class="{'selected':settings.seconds == s}" ng-repeat="s in seconds"><input type="radio" ng-model="settings.seconds" ng-change="saveSettings()" ng-value="s"/>{{s}}</label>
+        </p>
         <button ng-click="startSlideshow()" title="Start the slideshow">Start</button>
     </div>
-    <div style="position: fixed;right: 0;top: 0;opacity: 0.2;">{{message}}</div>
+    <div style="position: fixed;right: 10px;bottom: 10px;opacity: 0.2;">{{message}}</div>
     <div id="firstRunMessageId" style="left: 0;line-height: 200px;margin-top: -100px;position: absolute;text-align: center;top: 50%; width: 100%;font-size:8em;">Key a number to stop this slideshow.</div>
 </body>
 
