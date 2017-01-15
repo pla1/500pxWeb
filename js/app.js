@@ -74,7 +74,7 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     $scope.message = "";
     var slideshowDiv = document.getElementById("slideshowDiv");
     var db;
-    var dbOpen = indexedDB.open('500px', 24);
+    var dbOpen = indexedDB.open('500px', 26);
     var timer = null;
     dbOpen.onupgradeneeded = function(e) {
         console.log("Upgrading...");
@@ -118,6 +118,10 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     }
 
     function clearPhotos() {
+        if (!db) {
+            console.log("DB not ready in clearPhotos method.");
+            return;
+        }
         var transactionDelete = db.transaction(["photos"], "readwrite");
         var storeDelete = transactionDelete.objectStore("photos");
         var clearRequest = storeDelete.clear();
@@ -152,13 +156,16 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     }
 
     $scope.slideshowInProgress = true;
-    familyFriendlyDefaultCategories = [
+    $scope.seconds = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 40, 50, 60
+    ]
+    var familyFriendlyDefaultCategories = [
         "Animals",
         "City and Architecture",
         "Nature",
         "Still Life"
     ];
-    categories = [
+    var categories = [
         "Uncategorized",
         "Abstract",
         "Animals",
@@ -522,6 +529,10 @@ pdApp.controller('pdController', ['$scope', '$http', 'CONSTANTS', function($scop
     }
 
     $scope.saveSettings = function() {
+        if (!db) {
+            console.log("DB not ready in saveSettings method.");
+            return;
+        }
         var transaction = db.transaction(["settings"], "readwrite");
         var store = transaction.objectStore("settings");
         var request = store.put($scope.settings, "main");
