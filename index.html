@@ -23,7 +23,7 @@
             </ul>
             <div>
                 <textarea ng-model="settings.usernames" placeholder="joe, bob, suzie, billy, rachel..." title="Comma or space separated 500px usernames" cols="50" rows="3"></textarea>&nbsp;&nbsp;
-                <div class="userDisplayedContainer"><img ng-show="userDisplayed" ng-src="{{userDisplayed.userpic_url}}"><br>{{userDisplayed.fullname}}</div>
+                <div class="userDisplayedContainer" ng-show="userDisplayed"><img ng-src="{{userDisplayed.userpic_url}}"><br>{{userDisplayed.fullname}}</div>
             </div>
             <button ng-click="queryServerUsers()">Save users</button>
         </div>
